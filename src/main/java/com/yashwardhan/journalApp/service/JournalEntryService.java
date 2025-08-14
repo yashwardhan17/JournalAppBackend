@@ -1,6 +1,7 @@
 package com.yashwardhan.journalApp.service;
 
 import com.yashwardhan.journalApp.entity.JournalEntry;
+import com.yashwardhan.journalApp.entity.User;
 import com.yashwardhan.journalApp.repository.JournalEntryRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,19 @@ public class JournalEntryService {
     @Autowired
     private JournalEntryRepository journalEntryRepository;
 
+    @Autowired
+    private UserService userService;
+
+    public void saveEntry(JournalEntry journalEntry, String userName){
+        User user = userService.findByUserName(userName);
+        journalEntry.setDate(LocalDateTime.now());
+        JournalEntry saved = journalEntryRepository.save(journalEntry);
+        user.getJournalEntries().add(saved);
+        userService.saveEntry(user);
+    }
+
     public void saveEntry(JournalEntry journalEntry){
-        try {
-            journalEntry.setDate(LocalDateTime.now());
-            journalEntryRepository.save(journalEntry);
-        } catch (Exception e) {
-            throw new RuntimeException("An error occured while saving the entry");
-        }
+        journalEntryRepository.save(journalEntry);
     }
 
     public List<JournalEntry> getAll(){
@@ -32,7 +39,10 @@ public class JournalEntryService {
         return journalEntryRepository.findById(id);
     }
 
-    public void deleteById(ObjectId id){
+    public void deleteById(ObjectId id, String userName){
+        User user = userService.findByUserName(userName);
+        user.getJournalEntries().removeIf(x -> x.getId().equals(id));  //for consistency, without this also it will get removed on users next save
+        userService.saveEntry(user);
         journalEntryRepository.deleteById(id);
     }
 }
