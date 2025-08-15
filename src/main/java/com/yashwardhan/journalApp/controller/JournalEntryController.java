@@ -33,7 +33,7 @@ public class JournalEntryController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("{userName}")
+    @PostMapping("/{userName}")
     public ResponseEntity<JournalEntry>  createEntry(@RequestBody JournalEntry myEntry, @PathVariable String userName){
         try {
             journalEntryService.saveEntry(myEntry, userName);
@@ -43,7 +43,7 @@ public class JournalEntryController {
         }
     }
 
-    @GetMapping("id/{myId}")
+    @GetMapping("/id/{myId}")
     public ResponseEntity<JournalEntry> getJournalEntryById(@PathVariable ObjectId myId){
         Optional<JournalEntry> journalEntry = journalEntryService.findById(myId);
         if(journalEntry.isPresent()){
@@ -52,7 +52,7 @@ public class JournalEntryController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @DeleteMapping("id/{userName}/{myId}")
+    @DeleteMapping("/id/{userName}/{myId}")
     public ResponseEntity<?> DeleteJournalEntryById(@PathVariable ObjectId myId, @PathVariable String userName){ // ? = wild card pattern (kch bhi return krwa skte h, kisi aur class ka obj bhi return krwa skte h)
         try {
             journalEntryService.deleteById(myId, userName);
