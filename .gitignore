@@ -32,4 +32,8 @@ build/
 ### VS Code ###
 .vscode/
 
+#Ignore Spring Boot Application properties
 src\main\resources\application.properties
+
+#Ignoer Test Files
+src\test\java\com\yashwardhan\journalApp\**\*.java
